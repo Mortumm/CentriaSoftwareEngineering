@@ -15,7 +15,7 @@ fn main() {
     let file = Arc::new(Mutex::new(File::open("measurements.txt").unwrap()));
     let file_size = file.lock().unwrap().metadata().unwrap().len();
 
-    let num_threads = 10; // Adjust based on your CPU cores
+    let num_threads = 10; // Adjust based on your available cores
     let chunk_size = file_size / num_threads as u64;
 
     let results = Arc::new(Mutex::new(HashMap::<String, StationData>::new()));
@@ -85,7 +85,6 @@ fn main() {
 
     let final_results = results.lock().unwrap();
 
-    // Open a file to write the results
     let mut output_file = File::create("results.txt").expect("Failed to create output file");
 
     for (station, data) in final_results.iter() {
@@ -97,7 +96,6 @@ fn main() {
             data.sum / data.count as f64
         );
 
-        // Write the formatted line to the file
         output_file
             .write_all(output_line.as_bytes())
             .expect("Failed to write to output file");
